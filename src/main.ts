@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 import express from "express";
-import userRoutes from './routes/UserRoutes';
+import userRoutes from "./routes/userRoutes";
 import { MongoDBConnection } from "./config/MongoDbConnection";
 
 dotenv.config();
@@ -12,11 +12,13 @@ app.use(express.json());
 app.use(userRoutes);
 
 (async function () {
-    const mongooseConnection = new MongoDBConnection();
+  const mongooseConnection = new MongoDBConnection();
 
-    await mongooseConnection.connect();
+  await mongooseConnection.connect();
 
-    app.listen(port, () => {
-        console.log(`Servidor Express está ouvindo na porta ${port}, acesse: http://localhost:${port}`);
-    });
+  app.listen(port, () => {
+    console.log(
+      `Servidor Express está ouvindo na porta ${port}, acesse: http://localhost:${port}`
+    );
+  });
 })();

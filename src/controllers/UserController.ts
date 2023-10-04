@@ -1,22 +1,25 @@
-import { userRepository } from "../models";
-import { IUser } from "./interfaces/UserInterface";
+import { IUser } from "../interfaces/UserInterface";
+import { userRepository } from "../models/UserRepository";
 
 export class UserController {
-    public findAll(): Promise<IUser[]> {
-        return userRepository.findAll();
-    }
+  public async findAll(): Promise<IUser[]> {
+    return userRepository.findAll();
+  }
 
-    public findById(id: string): Promise<IUser> {
-        return userRepository.findById(id);
-    }
+  public async findById(id: string): Promise<IUser | null> {
+    return userRepository.findById(id);
+  }
 
-    public create(name: string, surname: string, email: string): Promise<IUser> {
-        return userRepository.create(name, surname, email);
-    }
+  public async create(
+    name: string,
+    surname: string,
+    email: string
+  ): Promise<IUser> {
+    return userRepository.create(name, surname, email);
+  }
 
-    public async destroy(id: string): Promise<boolean> {
-        const userDeleted = await userRepository.destroy(id);
-
-        return userDeleted.acknowledged;
-    }
+  public async destroy(id: string): Promise<boolean> {
+    const userDeleted = await userRepository.destroy(id);
+    return userDeleted.acknowledged;
+  }
 }

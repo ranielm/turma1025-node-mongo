@@ -1,52 +1,58 @@
-import express, { Request, Response } from "express";
-import { userController } from "../controllers";
+import express from "express";
+import { UserController } from "../controllers/UserController";
 
-const routes = express.Router();
+const router = express.Router();
+const userController = new UserController();
 
-routes.get('/users', async (req: Request, res: Response) => {
-    try {
-        const users = await userController.findAll();
-
-        return res.status(200).json(users);
-    } catch (err) {
-        console.log(err);
-    };
+// Rota para buscar todos os usuários
+router.get("/users", async (req, res) => {
+  try {
+    const users = await userController.findAll();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
 });
 
-routes.get('/users/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const user = await userController.findById(id);
-    
-        return res.status(200).json(user);    
-    } catch (error) {
-        console.log(error);
+// Rota para buscar um usuário por ID
+router.get("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await userController.findById(id);
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).json({ error: "Usuário não encontrado" });
     }
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar usuário" });
+  }
 });
 
-routes.post('/users', async (req: Request, res: Response) => {
-    try {
-        const { name, surname, email } = req.body;
-        const user = await userController.create(name, surname, email);
+// Rota para criar um novo usuário
+router.post("/users", async (req, res) => {
+  const { name, surname, email } = req.body;
+  try {
+    const newUser = await userController.create(name, surname, email);
+    res.status(201).json(newUser);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao criar usuário" });
+  }
+});
 
-        return res.status(201).json(user);
-    } catch (error) {
-        console.log(error);
+// Rota para excluir um usuário por ID
+router.delete("/users/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await userController.destroy(id);
+    if (deleted) {
+      res.json({ message: "Usuário excluído com sucesso" });
+    } else {
+      res.status(404).json({ error: "Usuário não encontrado" });
     }
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao excluir usuário" });
+  }
 });
 
-routes.delete('/users/:id', async (req: Request, res: Response) => {
-    try {
-        const { id } = req.params;
-        const user = await userController.destroy(id);
-
-        return res.status(200).json(user);
-    } catch (error) {
-        console.log(error);
-    }
-});
-
-// routes.put('/users/:id', (req: Request, res: Response) => { });
-
-export default routes;
-
+export default router;
